@@ -23,7 +23,7 @@ const Views = {
 
 /**
  * 
- * @param {React.props} props
+ * @param {object} props
  * @param {Function} props.onClick
  */
 function ViewButtons(props) {
@@ -43,13 +43,9 @@ export default function Calendar(props) {
     // Default is Week. Can only ever be Day, Week, Month or Year.
     const [ view, setView ] = useState(Views.WEEK);
 
-    /**
-     * Stores the global date value used throughout the Calendar component.
-     * Doing this allows the overall useState to be put into context, which
-     * allows other components can get and set the date value without needing
-     * to pass stuff through props lots of times.
-     */
+    // Both of the below are stored in context.
     const [ date, setDate ] = useState(new Date());
+    const [ timetable, setTimetable ] = useState({});
 
     /**
      * Sets {@link view} to the component corresponding to the button in {@link ViewButtons} that was clicked.
@@ -64,13 +60,11 @@ export default function Calendar(props) {
         <>
         <ViewButtons onClick={viewButtonsHandleChange}/>
 
-        
-        <TimetableContext.Provider value={null}>
+        <TimetableContext.Provider value={timetable}>
             <DateContext.Provider value={[ date, setDate ]}>
                 {view}
             </DateContext.Provider>
         </TimetableContext.Provider>
-
         </>
     );
 }

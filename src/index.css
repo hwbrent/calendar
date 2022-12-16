@@ -8,6 +8,16 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.month.week{
+  border-color: black;
+  /* display: flex; */
+  /* justify-content: space-between; */
+}
+.month.day {
+  border: 3px solid black;
+  border-radius: 10%;
+  cursor: pointer;
 }
