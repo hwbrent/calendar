@@ -108,7 +108,7 @@ function MonthDay(props) {
 
     return (
         <td className="month day" data-key={props.dayKey} onClick={handleClick}>
-            <div className="date-number">{props.date.getDate()}</div>
+            <div className="month day number">{props.date.getDate()}</div>
             <br/>
             <div className='actvity-count'>{null}</div>
         </td>
