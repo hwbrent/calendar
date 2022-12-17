@@ -32,9 +32,8 @@ export const Months = {
     7: 'August',
     8: 'September',
     9: 'October',
-    1: 'November',
-    1: 'December'
-
+    10: 'November',
+    11: 'December'
 };
 
 /**
@@ -84,7 +83,7 @@ export const convertDateToYYYYMMDD = (date) => date.toISOString().slice(0,10);
  * 
  * @returns {object[]} the activites in the timetable which occur on the same day as the date passed in.
  */
-export function getActivites(date, timetable) {
+export function getActivities(date, timetable) {
     
     const dotw = Weekdays[date.getDay()];
     const dayActivities = timetable[dotw];
