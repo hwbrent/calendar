@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext} from 'react';
-import { useForceRerender } from '../misc-components';
+import { useForceRerender } from '../misc/components';
 import { DateContext, TimetableContext } from '../Calendar';
 
 /**
@@ -92,24 +92,19 @@ function DayPopup(props) {
  * When clicked, it causes {@link DayPopup a popup} to be rendered
  *
  * @param {object} props
- * @param {Date} props.date - The (full) date corresponding to this day of the month
+ * @param {Date} props.date - The (full) date corresponding to THIS day of the month
  * @param {number} props.dayKey - The unique key corresponding to this particular `MonthDay`.
- * @param {() => setPopupDayKey} props.onClick - `setPopupDayKey` from useState in {@link Month} to set the key of the day for which the popup should be rendered.
+ * @param {React.Dispatch<React.SetStateAction<number>>} props.setPopupDayKey - `setPopupDayKey` from useState in {@link Month} to set the key of the day for which the popup should be rendered.
  * @see {@link Month} component
  */
 function MonthDay(props) {
-    // This is the value that the month holds. The key specific to this MonthDay
-    // is props.dayKey
-    const [ _, setPopupDayKey ] = props.useState;
 
     const handleClick = () => {
-        setPopupDayKey((prev) => prev === props.dayKey ? null : props.dayKey);
+        // If the new popup key is the same as the previous one, set the current value to null.
+        // In practice, this means that if the user clicks a day of the month once, the popup
+        // will mount. If they click the same day again, the popup will unmount.
+        props.setPopupDayKey((prev) => prev === props.dayKey ? null : props.dayKey);
     };
-
-    const timetable = useContext(TimetableContext);
-    if (timetable != null && Object.keys(timetable).length > 0) {
-        console.log(timetable);
-    }
 
     return (
         <td className="month day" data-key={props.dayKey} onClick={handleClick}>
@@ -126,35 +121,22 @@ function MonthDay(props) {
  * @returns {JSX.Element}
  */
 export default function Month(props) {
+    const timetable = useContext(TimetableContext);
+
     const [ date, setDate ] = useContext(DateContext);
 
     // We use this useState to help with rendering the day popup
     const [ popupDayKey, setPopupDayKey ] = useState(null);
 
-    const [ auxPopupInfo, setAuxPopupInfo ] = useState(null);
-
-    // const weeks = getCells(2021, 4); // may 2021, spans 6 weeks
-    const weeks = getCells(2021, 1); // feb 2021, spans 4 weeks
-
-    const monthDays = [];
-    let index1 = 0;
-    let popupIndex = weeks.length;
-    for (const week of weeks) {
-        monthDays.push(
-            <tr className="month week" key={index1} data-key={index1}>
-                {week.map((d, index2) => {
-                    const key = index1*7 + index2;
-                    return <MonthDay date={d} dayKey={key} useState={[popupDayKey,setPopupDayKey]}/>;
-                })}
-            </tr>
-        );
-        monthDays.push(
-            <tr className='day-popup-container' key={popupIndex} data-key={popupIndex}></tr>
-        );
-        index1++;
-        popupIndex++;
-    }
-    // monthDays.splice(monthDays.length-1);
+    const weeks = getCells(date.getFullYear(), date.getMonth());
+    const monthDays = weeks.map((week, index1) => (
+        <tr className="month week" key={index1}>
+            {week.map((d, index2) => {
+                const key = index1*7 + index2;
+                return <MonthDay date={d} dayKey={key} setPopupDayKey={setPopupDayKey}/>;
+            })}
+        </tr>
+    ));
 
     const table = (
         <table className='month'>
