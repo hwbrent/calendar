@@ -28,19 +28,13 @@ function getCells(year, month) {
         // Which of the 6 subarrays in `days` the day of the month should be added to.
         const daysSubarrayToPushTo = Math.floor(i / 7);
         
-        // This checks if the last array in `days` is redundant, i.e. if it doesn't
-        // contain any days that are actually in `month`. Some months, e.g. January 2022,
-        // have to span 6 rows of 7 days. But some months won't need to. For the months
-        // that don't need to, the below if statement removes the last subarray to get rid
-        // of the redundant days and make the calendar view smaller and tidier.
-        if (daysSubarrayToPushTo === 5 && days[5].length === 0 && date.getMonth() !== month) {
-            delete days[5];
+        // This checks if the current `week` being calculated is redundant, i.e. if it doesn't
+        // contain any days that are actually in `month`.
+        if (daysSubarrayToPushTo >= 4 && days[daysSubarrayToPushTo].length === 0 && date.getMonth() !== month) {
+            days.splice(daysSubarrayToPushTo);
             break;
         }
 
-        // const cell = <MonthCell date={date} timetable={sample_timetable} />;
-
-        // days[daysSubarrayToPushTo].push(cell);
         days[daysSubarrayToPushTo].push(date);
     }
 
