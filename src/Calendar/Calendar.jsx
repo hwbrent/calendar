@@ -10,9 +10,12 @@ export const TimetableContext = createContext();
 
 /**
  * An enum which maps each type of calendar view to its corresponding component.
+ * @readonly
+ * @enum {JSX.Element}
  * @property {JSX.Element} DAY - See {@link Day}.
  * @property {JSX.Element} WEEK - See {@link Week}.
  * @property {JSX.Element} MONTH - See {@link Month}.
+ * @property {JSX.Element} YEAR - See {@link Year}.
  */
 const Views = {
     DAY: <Day/>,
@@ -22,9 +25,10 @@ const Views = {
 };
 
 /**
+ * Provides a set of buttons which can be clicked to set the view format of the calendar.
  * 
  * @param {object} props
- * @param {Function} props.onClick
+ * @param {() => setView} props.onClick
  */
 function ViewButtons(props) {
     return (
@@ -32,7 +36,7 @@ function ViewButtons(props) {
             <button type='button' value="DAY" onClick={props.onClick}>Day</button>
             <button type='button' value="WEEK" onClick={props.onClick}>Week</button>
             <button type='button' value="MONTH" onClick={props.onClick}>Month</button>
-            <button type='button' value="YEAR" onClick={props.onClick}>Year</button>
+            <button type='button' value="YEAR" onClick={props.onClick} disabled>Year</button>
         </div>
     );
 }
