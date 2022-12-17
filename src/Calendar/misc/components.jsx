@@ -45,6 +45,6 @@ export function ViewRadios(props) {
  *
  */
 export const useForceRerender = () => {
-    const [bool, setBool] = useState(false);
+    const [ _, setBool ] = useState(false);
     return () => setBool(prev => !prev);
 }
