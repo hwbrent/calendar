@@ -30,6 +30,11 @@ code {
   cursor: pointer;
 }
 
+/* Saturday and Sunday columns in Month view */
+.month.day:nth-last-child(1), .month.day:nth-last-child(2) {
+  background-color: #D4D4D4;
+}
+
 .day-popup {
   position: absolute;
   border: 1px solid black;
