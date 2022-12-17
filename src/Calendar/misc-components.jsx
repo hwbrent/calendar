@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState } from "react";
 
 /**
  * Provides a set of three radio buttons that allows the user to choose
@@ -30,3 +30,21 @@ export function ViewRadios(props) {
     );
 }
 
+/**
+ * Custom hook that can be used to force components to rerender.
+ *
+ * @returns {Function} Function that forces a rerender of the component it's called in.
+ * @example
+ *
+ * // Using the useForceRerender hook to rerender a component when the window is resized.
+ * const forceRerender = useForceRerender();
+ * useEffect(() => {
+ *     window.addEventListener('resize', forceRerender);
+ *     return () => window.removeEventListener('resize', forceRerender);
+ * },[]);
+ *
+ */
+export const useForceRerender = () => {
+    const [bool, setBool] = useState(false);
+    return () => setBool(prev => !prev);
+}
