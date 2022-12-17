@@ -5,13 +5,15 @@ import Week from './Week/Week';
 import Month from './Month/Month';
 import Year from './Year/Year';
 
+const sampleTimetable = require('./sample_timetable.json');
+
 export const DateContext = createContext();
 export const TimetableContext = createContext();
 
 /**
  * An enum which maps each type of calendar view to its corresponding component.
  * @readonly
- * @enum {JSX.Element}
+ * @enum
  * @property {JSX.Element} DAY - See {@link Day}.
  * @property {JSX.Element} WEEK - See {@link Week}.
  * @property {JSX.Element} MONTH - See {@link Month}.
@@ -43,6 +45,11 @@ function ViewButtons(props) {
 
 export default function Calendar(props) {
 
+    useEffect(() => {
+        console.log(sampleTimetable);
+    }, []);
+    
+
     // The type of calendar view that's being shown.
     // Default is Week. Can only ever be Day, Week, Month or Year.
     const [ view, setView ] = useState(Views.WEEK);
@@ -64,7 +71,8 @@ export default function Calendar(props) {
         <>
         <ViewButtons onClick={viewButtonsHandleChange}/>
 
-        <TimetableContext.Provider value={timetable}>
+        {/* <TimetableContext.Provider value={timetable}> */}
+        <TimetableContext.Provider value={sampleTimetable}>
             <DateContext.Provider value={[ date, setDate ]}>
                 {view}
             </DateContext.Provider>
