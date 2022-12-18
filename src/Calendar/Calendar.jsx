@@ -5,6 +5,8 @@ import Week from './Week/Week';
 import Month from './Month/Month';
 import Year from './Year/Year';
 
+import { setDocumentTitle } from './misc/functions';
+
 const sampleTimetable = require('./sample_timetable.json');
 
 export const DateContext = createContext();
@@ -49,10 +51,14 @@ export default function Calendar(props) {
         console.log(sampleTimetable);
     }, []);
     
-
     // The type of calendar view that's being shown.
     // Default is Week. Can only ever be Day, Week, Month or Year.
     const [ view, setView ] = useState(Views.WEEK);
+
+    useEffect(() => {
+        const viewType = Object.keys(Views).find(property => Views[property] === view);
+        setDocumentTitle(viewType);
+    },[view]);
 
     // Both of the below are stored in context.
     const [ date, setDate ] = useState(new Date());

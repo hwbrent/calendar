@@ -76,6 +76,39 @@ export const Weekdays = {
 export const convertDateToYYYYMMDD = (date) => date.toISOString().slice(0,10);
 
 /**
+ * Sets the browser tab name using the current calendar view name.
+ *
+ * @param {'DAY'|'WEEK'|'MONTH'|'YEAR'} viewName - the type of format that the calendar is currently being viewed in
+ * @returns {void} void
+ * @see Calendar - the useEffect
+ * @example
+ * const viewName = 'WEEK';
+ * setDocumentTitle(viewName); // --> document.title = 'Week view - Timetable';
+ */
+export function setDocumentTitle(viewName) {
+    document.title = `${capitaliseFirstLetter(viewName)} view - Timetable`;
+}
+
+/**
+ * Formats `string` such that the first letter of each word is capitalised, and the other letters are lowercase.
+ * @param {string} string 
+ */
+export function capitaliseFirstLetter(string) {
+    return string
+        .split(' ')
+        .map((word) => {
+            const first = word[0].toUpperCase();
+            const rest = word
+                .slice(1)
+                .split('')
+                .map((char) => char.toLowerCase())
+                    .join('');
+                return first + rest;
+        })
+        .join('');
+};
+
+/**
  * Gets all the activites in `timetable` that occur on `date`.
  *
  * @param {Date} date - the date
