@@ -5,11 +5,17 @@ import Week from './Week/Week';
 import Month from './Month/Month';
 import Year from './Year/Year';
 
-import { setDocumentTitle } from './misc/functions';
+import { Months, setDocumentTitle } from './misc/functions';
+import { DateToggles } from './misc/components';
 
 const sampleTimetable = require('./sample_timetable.json');
 
+/**
+ * A React useState holding the value of the `Date` currently being viewed in the calendar.
+ * @type {React.useState}
+ */
 export const DateContext = createContext();
+
 export const TimetableContext = createContext();
 
 /**
@@ -21,7 +27,7 @@ export const TimetableContext = createContext();
  * @property {JSX.Element} MONTH - See {@link Month}.
  * @property {JSX.Element} YEAR - See {@link Year}.
  */
-const Views = {
+export const Views = {
     DAY: <Day/>,
     WEEK: <Week/>,
     MONTH: <Month/>,
@@ -53,7 +59,7 @@ export default function Calendar(props) {
     
     // The type of calendar view that's being shown.
     // Default is Week. Can only ever be Day, Week, Month or Year.
-    const [ view, setView ] = useState(Views.WEEK);
+    const [ view, setView ] = useState(Views.MONTH);
 
     useEffect(() => {
         const viewType = Object.keys(Views).find(property => Views[property] === view);
@@ -73,6 +79,23 @@ export default function Calendar(props) {
         setView(viewComponent);
     };
 
+    /**
+     * 
+     * @returns {string} New text to go in the `<h3>`.
+     */
+    function getViewHeaderText() {
+        switch (view) {
+            case Views.DAY:
+                return `Day - ${date.getDate()} ${Months[date.getMonth()]} ${date.getFullYear()}`;
+            case Views.WEEK:
+                return `Week - ${date.getDate()} ${Months[date.getMonth()]} ${date.getFullYear()}`;
+            case Views.MONTH:
+                return `Month - ${Months[date.getMonth()]} ${date.getFullYear()}`;
+            case Views.YEAR:
+                return `Year - ${date.getFullYear()}`;
+        }
+    }
+
     return (
         <>
         <ViewButtons onClick={viewButtonsHandleChange}/>
@@ -80,7 +103,10 @@ export default function Calendar(props) {
         {/* <TimetableContext.Provider value={timetable}> */}
         <TimetableContext.Provider value={sampleTimetable}>
             <DateContext.Provider value={[ date, setDate ]}>
+
+                <h3>{getViewHeaderText()}</h3>
                 {view}
+
             </DateContext.Provider>
         </TimetableContext.Provider>
         </>
