@@ -104,6 +104,7 @@ export default function Calendar(props) {
         <TimetableContext.Provider value={sampleTimetable}>
             <DateContext.Provider value={[ date, setDate ]}>
 
+                <DateToggles view={view}/>
                 <h3>{getViewHeaderText()}</h3>
                 {view}
 
