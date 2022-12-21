@@ -101,30 +101,22 @@ function DayPopup(props) {
 function MonthDay(props) {
 
     const timetable = useContext(TimetableContext);
-    
-    const [ activities, setActivities ] = useState([]);
-    useEffect(() => {
-        setActivities(getActivities(props.date, timetable));
-    }, [props.date]);
 
-    const eventPreviews = [];
-    if (activities.length > 0) {
+    const eventPreviews = useMemo(() => {
+        const activities = getActivities(props.date, timetable);
+        const previews = [];
         for (const [index, entry] of activities.entries()) {
             if (index > 1) {
                 const remaining = activities.slice(index).length;
-                eventPreviews.push(
-                    <div>{remaining} more...</div>
-                )
+                previews.push(<div>{remaining} more...</div>)
                 break;
             }
-            const activityName = entry.Activity;
-            const startTime = formatTime(entry.Start);
-            console.log(index, activityName, startTime);
-            eventPreviews.push(
-                <div className='truncate'>{startTime}, {activityName}</div>
+            previews.push(
+                <div className='truncate'>{formatTime(entry.Start)}, {entry.Activity}</div>
             );
         }
-    }
+        return previews;
+    },[props.date, timetable]);
 
     const handleClick = () => {
         // If the new popup key is the same as the previous one, set the current value to null.
