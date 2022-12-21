@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext, useMemo} from 'react';
 import { useForceRerender } from '../misc/components';
 import { DateContext, TimetableContext } from '../Calendar';
+import { formatTime, getActivities } from '../misc/functions';
 
 /**
  * Formats the current month into a 2D array, like in Apple Calendar's month view.
@@ -99,6 +100,32 @@ function DayPopup(props) {
  */
 function MonthDay(props) {
 
+    const timetable = useContext(TimetableContext);
+    
+    const [ activities, setActivities ] = useState([]);
+    useEffect(() => {
+        setActivities(getActivities(props.date, timetable));
+    }, [props.date]);
+
+    const eventPreviews = [];
+    if (activities.length > 0) {
+        for (const [index, entry] of activities.entries()) {
+            if (index > 1) {
+                const remaining = activities.slice(index).length;
+                eventPreviews.push(
+                    <div>{remaining} more...</div>
+                )
+                break;
+            }
+            const activityName = entry.Activity;
+            const startTime = formatTime(entry.Start);
+            console.log(index, activityName, startTime);
+            eventPreviews.push(
+                <div className='truncate'>{startTime}, {activityName}</div>
+            );
+        }
+    }
+
     const handleClick = () => {
         // If the new popup key is the same as the previous one, set the current value to null.
         // In practice, this means that if the user clicks a day of the month once, the popup
@@ -110,7 +137,10 @@ function MonthDay(props) {
         <td className="month day" data-key={props.dayKey} onClick={handleClick}>
             <div className="month day number">{props.date.getDate()}</div>
             <br/>
+
+            {/* Not sure why, but removing this puts a grey box behind the day number... */}
             <div className='actvity-count'>{null}</div>
+            {eventPreviews}
         </td>
     );
 }

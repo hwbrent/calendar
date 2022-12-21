@@ -108,6 +108,8 @@ export function capitaliseFirstLetter(string) {
         .join('');
 };
 
+export const formatTime = (timeStr) => timeStr.slice(0,5);
+
 /**
  * Gets all the activites in `timetable` that occur on `date`.
  *
@@ -117,12 +119,17 @@ export function capitaliseFirstLetter(string) {
  * @returns {object[]} the activites in the timetable which occur on the same day as the date passed in.
  */
 export function getActivities(date, timetable) {
-    
     const dotw = Weekdays[date.getDay()];
     const dayActivities = timetable[dotw];
-    
+
+    if (dayActivities.length === 0) {
+        return [];
+    }
+
     const convertedDate = convertDateToYYYYMMDD(date);
-    dayActivities.filter((act) => act.Dates.includes(convertedDate));
+    dayActivities.filter((act) => {
+        return act.Dates && act.Dates instanceof Array && act.Dates.includes(convertedDate);
+    });
 
     return dayActivities;
 }

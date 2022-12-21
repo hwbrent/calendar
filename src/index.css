@@ -53,3 +53,15 @@ h3 {
   opacity: 0.975; /* Anything lower and the stuff behind is too visible */
   backdrop-filter: blur(14px);
 }
+
+.truncate {
+  /* 
+  Basically cuts text off instead of making it wrap around. Also adds ellipsis
+  e.g. COMP2221 might become COMP2...
+
+  See https://www.w3schools.com/cssref/css3_pr_text-overflow.php (first example)
+  */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

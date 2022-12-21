@@ -80,7 +80,7 @@ export default function Calendar(props) {
     };
 
     /**
-     * 
+     * Uses {@link date} to create a header to display above the calendar view.
      * @returns {string} New text to go in the `<h3>`.
      */
     function getViewHeaderText() {
@@ -93,6 +93,8 @@ export default function Calendar(props) {
                 return `Month - ${Months[date.getMonth()]} ${date.getFullYear()}`;
             case Views.YEAR:
                 return `Year - ${date.getFullYear()}`;
+            default:
+                return '';
         }
     }
 
