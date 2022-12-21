@@ -46,8 +46,11 @@ h3 {
 .day-popup {
   position: absolute;
   border: 1px solid black;
-  height: 50px;
-  width: 50px;
+
+  min-height: 75px;
+  min-width: 50px;
+  height: auto;
+  width: auto;
 
   /* Make background blurred and slightly transparent */
   opacity: 0.975; /* Anything lower and the stuff behind is too visible */

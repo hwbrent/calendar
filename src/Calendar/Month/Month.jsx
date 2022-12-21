@@ -52,13 +52,22 @@ function getCells(year, month) {
  * that day.
  *
  * @param {object} props - React props
- * @param {number} props.dayKey - Coordinates for the top left of the div.
+ * @param {number} props.dayKey - The unique key of the MonthDay which was clicked.
+ * @param {Date} props.date - The date corresponding to the MonthDay that was clicked.
  */
 function DayPopup(props) {
-    const forceRerender = useForceRerender();
+
+    const timetable = useContext(TimetableContext);
+    const activities = useMemo(() => {
+        const acts = getActivities(props.date, timetable).map((value, index) => (
+            <div key={index}>{formatTime(value.Start)}, {value.Activity}</div>
+        ));
+        return acts;
+    },[props.date]);
 
     // Rerender whenever the window is resized so that the popup
     // stays "attached" to the MonthDay.
+    const forceRerender = useForceRerender();
     useEffect(() => {
         window.addEventListener('resize', forceRerender);
         return () => window.removeEventListener('resize', forceRerender);
@@ -77,14 +86,18 @@ function DayPopup(props) {
         /* GET COORDS */
         const monthDayTd = document.querySelector(`.month.day[data-key='${props.dayKey}']`);
         const dims = monthDayTd.getBoundingClientRect();
-
         style.top = `${dims.bottom}px`;
         style.left = `${dims.left}px`;
 
         return style;
     }
 
-    return <div className='day-popup' style={getStyle()}>hi</div>;
+    // return <div className='day-popup' style={getStyle()}>hi</div>;
+    return (
+        <div className='day-popup' style={getStyle()}>
+            {activities}
+        </div>
+    );
 }
 
 /**
@@ -108,7 +121,7 @@ function MonthDay(props) {
         for (const [index, entry] of activities.entries()) {
             if (index > 1) {
                 const remaining = activities.slice(index).length;
-                previews.push(<div>{remaining} more...</div>)
+                previews.push(<div>{remaining} more...</div>);
                 break;
             }
             previews.push(
@@ -149,12 +162,16 @@ export default function Month(props) {
 
     // We use this useState to help with rendering the day popup
     const [ popupDayKey, setPopupDayKey ] = useState(null);
+    let popupDate;
 
     const weeks = getCells(date.getFullYear(), date.getMonth());
     const monthDays = weeks.map((week, index1) => (
         <tr className="month week" key={index1}>
             {week.map((d, index2) => {
                 const key = index1*7 + index2;
+                if (key === popupDayKey) {
+                    popupDate = d;
+                }
                 return <MonthDay date={d} dayKey={key} setPopupDayKey={setPopupDayKey}/>;
             })}
         </tr>
@@ -183,7 +200,7 @@ export default function Month(props) {
         <div>
             Month
             {table}
-            {popupDayKey === null ? null : <DayPopup dayKey={popupDayKey}/>}
+            {popupDayKey === null ? null : <DayPopup dayKey={popupDayKey} date={popupDate}/>}
         </div>
     );
 }
