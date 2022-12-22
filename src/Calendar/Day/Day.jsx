@@ -1,145 +1,67 @@
-import React, { useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { DateContext, TimetableContext } from '../Calendar';
+import { getActivities, Weekdays } from '../misc/functions';
 
 export default function Day(props) {
     const [ date, setDate ] = useContext(DateContext);
     const timetable = useContext(TimetableContext);
 
-    return (
-        <div>
-            Day
-        </div>
-    );
-}
+    const activities = useMemo(() => getActivities(date,timetable),[date, timetable]);
 
-/*
-function DayTimetable(props) {
-    const [ date, setDate ] = useContext(DateContext);
-    const [ timetable, setTimetable ] = useContext(TimetableContext);
+    const trs = [];
+    for (let i=0; i<24; i++) {
+        const lowerBound = i;
+        const upperBound = i+1;
 
-    const activities = getActivitiesOnThisDate(timetable, date);
-    // console.log(activities);
-    
-    const dateString = date.toLocaleDateString('en-us', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
+        const from = `${i < 10 ? 0 : ''}${i}:00`;
+        const to = `${i+1 < 10 ? 0 : ''}${i+1}:00`;
 
-    const handleClick = (event) => {
-        let tempYear = date.getFullYear();
-        let tempMonth = date.getMonth();
-        let tempDate = date.getDate();
-
-        const changed = event.target.classList[0];
-        const factor = event.target.innerText === LEFTARROW ? -1 : 1;
-
-        if (changed === 'year') {
-            tempYear += factor;
-        } else if (changed === 'month') {
-            tempMonth += factor;
-        } else if (changed === 'day') {
-            tempDate += factor;
-        }
-
-        const newDate = new Date(tempYear, tempMonth, tempDate);
-        setDate(newDate);
+        trs.push(
+            <tr className='day slot' key={i} data-from={from} data-to={to}>&nbsp;</tr>
+            // <tr className='day slot' key={i}>{lowerBound} - {upperBound}</tr>
+        );
     }
 
-    const yearRow = (
-        <LeftRightButtons
-            left={{
-                className: 'year left-button',
-                onClick: handleClick
-            }}
-            centre={{ innerText: date.getFullYear() }}
-            right={{
-                className: 'year right-button',
-                onClick: handleClick
-            }}
-        />
-    );
-    const monthRow = (
-        <LeftRightButtons
-            left={{
-                className: 'month left-button',
-                onClick: handleClick
-            }}
-            centre={{ innerText: MONTHS[date.getMonth()] }}
-            right={{
-                className: 'month right-button',
-                onClick: handleClick
-            }}
-        />
-    );
-    const dayRow = (
-        <LeftRightButtons
-            left={{
-                className: 'day left-button',
-                onClick: handleClick
-            }}
-            centre={{ innerText: date.getDate() }}
-            right={{
-                className: 'day right-button',
-                onClick: handleClick
-            }}
-        />
-    );
+    /* Add times next to <tr> borders */
+    const getTimeLabels = () => {
+        const labels = [];
 
-    const tbody = () => {
-        const trs = [];
-        for (let i = 0; i < 24; i++) {
-            const lowerBoundary = new Date(date.getTime());
-            const upperBoundary = new Date(date.getTime());
-            lowerBoundary.setUTCHours(i);
-            lowerBoundary.setUTCMinutes(0);
-            upperBoundary.setUTCHours(i+1);
-            upperBoundary.setUTCMinutes(0);
-            const tr = (
-                <tr>
-                    <td>
-                    {get_HHMM(lowerBoundary)} - {get_HHMM(upperBoundary)}
-                </td>
-                    <td>
-                        <TimeSlot
-                            lowerBoundary={lowerBoundary}
-                            upperBoundary={upperBoundary}
-                            activities={activities}/>
-                    </td>
-                </tr>
-            );
-            trs.push(tr);
+        const daySlots = document.querySelectorAll('.day.slot');
+        for (let [index, tr] of daySlots.entries()) {
+
+            const trDims = tr.getBoundingClientRect();
+            const labelStyle = {};
+
+            // Get the coordinates of the label based off the top border of the <tr>
+            labelStyle.top = `${trDims.top - 10}px`;
+            labelStyle.left = `${trDims.left - 55}px`;
+
+            const time = `${index < 10 ? 0 : ''}${index}:00`;
+            labels.push(<div className='time-label' style={labelStyle} key={index}>{time}</div>);
+
+            // Add a label adjacent to the bottom of the last <tr>
+            if (index === daySlots.length-1) {
+                const lastLabelStyle = {
+                    top: `${trDims.bottom - 10}px`,
+                    left: `${trDims.left - 55}px`
+                };
+                labels.push(<div className='time-label' style={lastLabelStyle} key={index+1}>00:00</div>);
+            }
         }
-        return trs;
+        return labels;
     }
 
-    const dayView = (
-        <table>
-            <thead>
-                <TodayButton/>
-                {yearRow}
-                {monthRow}
-                {dayRow}
-            </thead>
-            <hr/>
-            <tbody>
-                {tbody()}
-                <hr/>
-                {activities.map(val => JSON.stringify(val,0,4))}
-            </tbody>
+    const table = (
+        <table className='day'>
+            {trs}
         </table>
     );
 
     return (
-        <div className='day-timetable-grid-container'>
-            <div className='day-timetable-grid-container-item'>
-                {}
-            </div>
-            <div className='day-timetable-grid-container-item'>
-                {dayView}
-            </div>
+        <div>
+            <h3>{Weekdays[date.getDay()]}</h3>
+            {table}
+            {getTimeLabels()}
         </div>
     );
 }
-*/

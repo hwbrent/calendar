@@ -18,8 +18,22 @@ h3 {
 table {
   border-spacing: 0px;
   border-collapse: collapse; /* stop individual cell borders from doubling up */
+  margin-left: auto;
+  margin-right: auto;
 }
 
+/* ************************************************** */
+
+.day {}
+.day.slot {
+  border-top: 1px solid grey;
+  border-bottom: 1px solid grey;
+  min-width: 50%;
+}
+
+.time-label {
+  position: absolute;
+}
 /* ************************************************** */
 
 /* this is a table */
@@ -27,8 +41,6 @@ table {
   width: 75%;
   table-layout: fixed;
   overflow-wrap: break-word;
-  margin-left: auto;
-  margin-right: auto;
 }
 .month.week{
   border-color: black;
