@@ -1,3 +1,5 @@
+import Day from "../Day/Day";
+
 /**
  * Enum with the days of the year as considered by the javascript `Date`.
  *
@@ -75,6 +77,8 @@ export const Weekdays = {
  */
 export const convertDateToYYYYMMDD = (date) => date.toISOString().slice(0,10);
 
+export const convertHourNumToHHMM = (num) => new Date(0,0,0,num).toISOString().search(/\d\d:\d/);
+
 /**
  * Sets the browser tab name using the current calendar view name.
  *
@@ -132,4 +136,29 @@ export function getActivities(date, timetable) {
     });
 
     return dayActivities;
+}
+
+/**
+ * Converts a time in the string form HH:MM (or HH:MM:SS) to a floating point `number`.
+ * @param {string} hhmm - from activity `Start` property
+ * @returns {number}
+ * @see {@link Day} - Used here
+ */
+export function convertHHMMtoFloat(hhmm) {
+    console.assert(typeof hhmm === 'string');
+
+    const digits = hhmm.matchAll(/\d+/g);
+    if (digits) {
+        const hours = digits.next().value; // integer
+        const minutes = digits.next().value; // floating point number in range 0-1
+        return parseFloat(hours) + (parseFloat(minutes)/60);
+    }
+    return null;
+}
+
+export function isToday(paramDate) {
+    const today = new Date();
+    return paramDate.getFullYear() === today.getFullYear()
+        && paramDate.getMonth() === today.getMonth()
+        && paramDate.getDate() === today.getDate();
 }

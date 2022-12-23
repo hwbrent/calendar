@@ -5,22 +5,45 @@ import { getActivities, Weekdays } from '../misc/functions';
 export default function Day(props) {
     const [ date, setDate ] = useContext(DateContext);
     const timetable = useContext(TimetableContext);
+    const [ timeLabels, setTimeLabels ] = useState([]);
 
+    // The filtered activities that are specific to THIS day.
     const activities = useMemo(() => getActivities(date,timetable),[date, timetable]);
 
-    const trs = [];
-    for (let i=0; i<24; i++) {
-        const lowerBound = i;
-        const upperBound = i+1;
+    // The time slots (<tr>s) and events contained within the time slots (<td>s).
+    const trs = useMemo(() => {
+        const arr = [];
+        for (let i=0; i<24; i++) {
+            const lowerBound = i;
+            const upperBound = i+1;
+            
+            const start = `${i < 10 ? 0 : ''}${i}:00`;
+            const end = `${i+1 < 10 ? 0 : ''}${i+1}:00`;
 
-        const from = `${i < 10 ? 0 : ''}${i}:00`;
-        const to = `${i+1 < 10 ? 0 : ''}${i+1}:00`;
+            const relevantActivities = activities.filter((act) => act.Start.slice(0,5) === start);
 
-        trs.push(
-            <tr className='day slot' key={i} data-from={from} data-to={to}>&nbsp;</tr>
-            // <tr className='day slot' key={i}>{lowerBound} - {upperBound}</tr>
-        );
-    }
+            arr.push(
+                <tr className='day slot' key={i} data-start={lowerBound} data-end={upperBound}>
+                    &nbsp;
+                    {relevantActivities.map((a, index) => {
+                        const duration = convertHHMMtoFloat(a.Duration) || 1;
+                        console.log('duration', duration);
+                        return (
+                            <td className='day event' rowSpan={duration}>
+                                {a.Activity}
+                            </td>
+                        );
+                    })}
+                </tr>
+            );
+        }
+        return arr;
+    }, [activities]);
+
+    // Update the time labels. Tis makes them rerender positioned correctly
+    useEffect(() => {
+        setTimeLabels(getTimeLabels());
+    }, [activities, date]);
 
     /* Add times next to <tr> borders */
     const getTimeLabels = () => {
@@ -51,17 +74,26 @@ export default function Day(props) {
         return labels;
     }
 
-    const table = (
-        <table className='day'>
-            {trs}
-        </table>
-    );
+    const contents =
+        activities.length === 0
+        ? <h3>No events found for this day!</h3>
+        : (
+            <>
+            <table className='day'>
+                <tbody>
+                    {trs}
+                </tbody>
+            </table>
+            <div id='timeLabels'>
+                {timeLabels}
+            </div>
+            </>
+        )
 
     return (
         <div>
             <h3>{Weekdays[date.getDay()]}</h3>
-            {table}
-            {getTimeLabels()}
+            {contents}
         </div>
     );
 }
