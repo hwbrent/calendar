@@ -162,3 +162,13 @@ export function isToday(paramDate) {
         && paramDate.getMonth() === today.getMonth()
         && paramDate.getDate() === today.getDate();
 }
+
+/**
+ * Emulates the python `range` function.
+ * @param {number} n
+ * @returns {Iterator<Array<number>>}
+ * @see {@link https://stackoverflow.com/a/37980601}
+ */
+export function range(n) {
+    return Array(n).keys();
+}

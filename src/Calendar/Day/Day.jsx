@@ -12,32 +12,29 @@ export default function Day(props) {
 
     // The time slots (<tr>s) and events contained within the time slots (<td>s).
     const trs = useMemo(() => {
-        const arr = [];
-        for (let i=0; i<24; i++) {
-            const lowerBound = i;
-            const upperBound = i+1;
-            
-            const start = `${i < 10 ? 0 : ''}${i}:00`;
-            const end = `${i+1 < 10 ? 0 : ''}${i+1}:00`;
+        return Array
+            .from(range(24))
+            .map((i) => {
+                const startTime = `${i < 10 ? 0 : ''}${i}:00`; // e.g. 17:00
 
-            const relevantActivities = activities.filter((act) => act.Start.slice(0,5) === start);
-
-            arr.push(
-                <tr className='day slot' key={i} data-start={lowerBound} data-end={upperBound}>
-                    &nbsp;
-                    {relevantActivities.map((a, index) => {
-                        const duration = convertHHMMtoFloat(a.Duration) || 1;
-                        console.log('duration', duration);
+                const tds = activities
+                    .filter((act) => act.Start.slice(0,5) === startTime)
+                    .map((activity) => {
+                        const duration = convertHHMMtoFloat(activity.Duration) || 1;
                         return (
                             <td className='day event' rowSpan={duration}>
-                                {a.Activity}
+                                {activity.Activity}
                             </td>
                         );
-                    })}
-                </tr>
-            );
-        }
-        return arr;
+                    });
+
+                return (
+                    <tr className='day slot' key={i} data-start={i} data-end={i+1}>
+                        &nbsp;
+                        {tds}
+                    </tr>
+                );
+            });
     }, [activities]);
 
     // Update the time labels. Tis makes them rerender positioned correctly
