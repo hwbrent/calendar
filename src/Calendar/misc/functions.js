@@ -163,6 +163,8 @@ export function isToday(paramDate) {
         && paramDate.getDate() === today.getDate();
 }
 
+export const add0Prefix = (num) => num < 10 ? `0${num}` : String(num);
+
 /**
  * Emulates the python `range` function.
  * @param {number} n

@@ -1,6 +1,88 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { DateContext, TimetableContext } from '../Calendar';
-import { getActivities, Weekdays } from '../misc/functions';
+import { useForceRerender } from '../misc/components';
+import { add0Prefix, convertHHMMtoFloat, getActivities, isToday, range, Weekdays } from '../misc/functions';
+
+/**
+ * Returns a horizontal `svg` line indicating the current time.
+ * @returns {svg} line
+ * @see {@link https://www.w3schools.com/graphics/svg_line.asp}
+ */
+function TimeLine() {
+    const forceRerender = useForceRerender();
+
+    useEffect(() => {
+        forceRerender();
+        const interval = setInterval(forceRerender, 60_000);
+        window.addEventListener('resize', forceRerender);
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener('resize', forceRerender);
+        };
+    }, []);
+
+    const now = new Date();
+    const hrs = now.getHours();
+    const mins = now.getMinutes();
+
+    /* Figure out WHERE the line needs to be drawn. */
+
+    const tr = document.querySelector(`.day.slot[data-start="${hrs}"]`);
+    if (!tr) {
+        console.error('Error - No <tr> found.');
+        return;
+    }
+
+    const trDims = tr.getBoundingClientRect();
+    const lineY = trDims.y + ((mins/60) * trDims.height);
+
+    /* Specify styling for SVGs */
+
+    const RED = 'rgb(255,0,0)';
+
+    const svgProps = {
+        height: window.innerHeight,
+        width: window.innerWidth
+    };
+    const lineProps = {
+        x1: trDims.left,
+        y1: lineY,
+        x2: trDims.right,
+        y2: lineY,
+        style: {stroke: RED, strokeWidth: 1},
+    };
+    const radius = 3;
+    const circleProps = {
+        cx: trDims.left + radius,
+        cy: lineY,
+        r: radius,
+        style: {fill: RED}
+    };
+
+    /* Create label */
+
+    const timeNow = `${add0Prefix(now.getHours())}:${add0Prefix(now.getMinutes())}`;
+    const labelStyle = {
+        top: `${lineY - 9}px`,
+        left: `${lineProps.x1 - 55}px`,
+        color: RED
+    };
+    const label = (
+        <div className='time-label' style={labelStyle}>
+            {timeNow}
+        </div>
+    );
+
+    return (
+        <>
+        <svg {...svgProps}>
+            <line {...lineProps}/>
+            <circle {...circleProps}/>
+        </svg>
+        {label}
+        </>
+    );
+}
 
 export default function Day(props) {
     const [ date, setDate ] = useContext(DateContext);
@@ -91,6 +173,7 @@ export default function Day(props) {
         <div>
             <h3>{Weekdays[date.getDay()]}</h3>
             {contents}
+            {isToday(date) ? <TimeLine/> : null}
         </div>
     );
 }
