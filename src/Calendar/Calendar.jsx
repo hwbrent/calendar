@@ -42,7 +42,7 @@ export const Views = {
  */
 function ViewButtons(props) {
     return (
-        <div>
+        <div className='view-buttons'>
             <button type='button' value="DAY" onClick={props.onClick}>Day</button>
             <button type='button' value="WEEK" onClick={props.onClick}>Week</button>
             <button type='button' value="MONTH" onClick={props.onClick}>Month</button>
@@ -51,15 +51,10 @@ function ViewButtons(props) {
     );
 }
 
-export default function Calendar(props) {
-
-    useEffect(() => {
-        console.log(sampleTimetable);
-    }, []);
-    
+export default function Calendar(props) {    
     // The type of calendar view that's being shown.
     // Default is Week. Can only ever be Day, Week, Month or Year.
-    const [ view, setView ] = useState(Views.MONTH);
+    const [ view, setView ] = useState(Views.DAY);
 
     useEffect(() => {
         const viewType = Object.keys(Views).find(property => Views[property] === view);
@@ -86,13 +81,13 @@ export default function Calendar(props) {
     function getViewHeaderText() {
         switch (view) {
             case Views.DAY:
-                return `Day - ${date.getDate()} ${Months[date.getMonth()]} ${date.getFullYear()}`;
+                return `${date.getDate()} ${Months[date.getMonth()]} ${date.getFullYear()}`;
             case Views.WEEK:
-                return `Week - ${date.getDate()} ${Months[date.getMonth()]} ${date.getFullYear()}`;
+                return `${date.getDate()} ${Months[date.getMonth()]} ${date.getFullYear()}`;
             case Views.MONTH:
-                return `Month - ${Months[date.getMonth()]} ${date.getFullYear()}`;
+                return `${Months[date.getMonth()]} ${date.getFullYear()}`;
             case Views.YEAR:
-                return `Year - ${date.getFullYear()}`;
+                return `${date.getFullYear()}`;
             default:
                 return '';
         }

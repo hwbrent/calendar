@@ -77,8 +77,6 @@ export const Weekdays = {
  */
 export const convertDateToYYYYMMDD = (date) => date.toISOString().slice(0,10);
 
-export const convertHourNumToHHMM = (num) => new Date(0,0,0,num).toISOString().search(/\d\d:\d/);
-
 /**
  * Sets the browser tab name using the current calendar view name.
  *
@@ -156,6 +154,10 @@ export function convertHHMMtoFloat(hhmm) {
     return null;
 }
 
+/**
+ * @param {Date} paramDate
+ * @returns {boolean} Boolean indicating if {@link paramDate} represents today. 
+ */
 export function isToday(paramDate) {
     const today = new Date();
     return paramDate.getFullYear() === today.getFullYear()

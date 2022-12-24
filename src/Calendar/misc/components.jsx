@@ -114,10 +114,10 @@ export function DateToggles(props) {
     };
 
     return (
-        <>
-        <button onClick={handleClick} value='decrement'>{'<-'}</button>
-        <button onClick={handleClick} value='today'>Today</button>
-        <button onClick={handleClick} value='increment'>{'->'}</button>
-        </>
+        <div className='date-toggles'>
+            <button onClick={handleClick} value='decrement'>{'<-'}</button>
+            <button onClick={handleClick} value='today'>Today</button>
+            <button onClick={handleClick} value='increment'>{'->'}</button>
+        </div>
     );
 }
